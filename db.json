@@ -1,0 +1,37 @@
+{
+  "produtos": [
+    {
+      "id": 1,
+      "category": "pc",
+      "name": "pc gamer performance",
+      "tag": "PC Gamer",
+      "title": "Setup Performance",
+      "description": "Configuração indicada para jogos, estudos e criação de conteúdo.",
+      "price": 4899.0,
+      "image": "assets/img/jogo1.PNG",
+      "imageAlt": "Produto gamer em destaque"
+    },
+    {
+      "id": 2,
+      "category": "jogo",
+      "name": "jogos e entretenimento",
+      "tag": "Jogos",
+      "title": "Biblioteca Gamer",
+      "description": "Títulos selecionados para diferentes perfis de jogadores.",
+      "price": 159.9,
+      "image": "assets/img/jogo2.PNG",
+      "imageAlt": "Jogos e entretenimento digital"
+    },
+    {
+      "id": 3,
+      "category": "acessorio",
+      "name": "controle headset teclado mouse",
+      "tag": "Acessórios",
+      "title": "Kit Essencial",
+      "description": "Periféricos para conforto, precisão e melhor experiência de jogo.",
+      "price": 349.9,
+      "image": "assets/img/jogo3.PNG",
+      "imageAlt": "Acessórios gamer para computador e console"
+    }
+  ]
+}

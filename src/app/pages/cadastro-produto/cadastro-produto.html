@@ -1,0 +1,57 @@
+<app-header />
+
+<main>
+<section class="section-pad">
+  <div class="container" style="max-width: 640px;">
+    <h2 class="mb-4">{{ produto.id ? 'Editar Produto' : 'Cadastrar Produto' }}</h2>
+
+    <form (ngSubmit)="salvarProduto()" #form="ngForm">
+      <div class="mb-3">
+        <label class="form-label" for="category">Categoria</label>
+        <select class="form-select" id="category" name="category" [(ngModel)]="produto.category" required>
+          @for (cat of categorias; track cat) {
+            <option [value]="cat">{{ cat }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="tag">Tag (etiqueta exibida no card)</label>
+        <input class="form-control" id="tag" name="tag" [(ngModel)]="produto.tag" required>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="title">Título</label>
+        <input class="form-control" id="title" name="title" [(ngModel)]="produto.title" required>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="description">Descrição</label>
+        <textarea class="form-control" id="description" name="description" rows="3" [(ngModel)]="produto.description" required></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="price">Preço</label>
+        <input type="number" step="0.01" min="0" class="form-control" id="price" name="price" [(ngModel)]="produto.price" required>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="image">Caminho da imagem</label>
+        <input class="form-control" id="image" name="image" [(ngModel)]="produto.image" placeholder="assets/img/jogo1.PNG" required>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="imageAlt">Texto alternativo da imagem</label>
+        <input class="form-control" id="imageAlt" name="imageAlt" [(ngModel)]="produto.imageAlt" required>
+      </div>
+
+      <div class="d-flex gap-2">
+        <button class="btn btn-primary" type="submit" [disabled]="form.invalid">Salvar</button>
+        <a class="btn btn-secondary" routerLink="/painel-principal">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</section>
+</main>
+
+<app-footer />

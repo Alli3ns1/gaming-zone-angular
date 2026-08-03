@@ -1,0 +1,56 @@
+<app-header />
+
+<main>
+  <section class="section-pad">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+        <h2 class="mb-0">Painel Principal</h2>
+        <a class="btn btn-primary" routerLink="/cadastro-produto">+ Novo Produto</a>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-bordered align-middle">
+          <thead class="table-dark">
+            <tr>
+              <th>ID</th>
+              <th>Imagem</th>
+              <th>Produto</th>
+              <th>Categoria</th>
+              <th>Descrição</th>
+              <th>Preço</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (produto of produtos(); track produto.id) {
+              <tr>
+                <td>{{ produto.id }}</td>
+                <td>
+                  <img [src]="produto.image" [alt]="produto.imageAlt" width="60" height="60">
+                </td>
+                <td>{{ produto.title }}</td>
+                <td>{{ produto.tag }}</td>
+                <td>{{ produto.description }}</td>
+                <td>{{ produto.price | currency:'BRL' }}</td>
+                <td class="d-flex gap-2">
+                  <button class="btn btn-primary btn-sm" type="button" (click)="editarProduto(produto.id)">
+                    Editar
+                  </button>
+                  <button class="btn btn-danger btn-sm" type="button" (click)="excluirProduto(produto.id)">
+                    Excluir
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      @if (produtos().length === 0) {
+        <p class="empty-message">Nenhum produto cadastrado ainda.</p>
+      }
+    </div>
+  </section>
+</main>
+
+<app-footer />

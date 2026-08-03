@@ -1,0 +1,127 @@
+<main class="login-shell">
+  <section class="login-brand">
+    <a routerLink="/" class="back-link">Voltar para a loja</a>
+    <img src="assets/img/logo.png" alt="Logo Gaming Zone">
+    <h1>Gaming Zone</h1>
+    <p>Área do cliente para acompanhar pedidos, contatos e preferências.</p>
+  </section>
+
+  <section class="login-panel" aria-labelledby="loginTitle">
+    <div class="auth-tabs" role="tablist" aria-label="Acesso do cliente">
+      <button
+        class="auth-tab"
+        [class.active]="activeTab() === 'login'"
+        type="button"
+        (click)="switchTab('login')"
+      >
+        Entrar
+      </button>
+      <button
+        class="auth-tab"
+        [class.active]="activeTab() === 'register'"
+        type="button"
+        (click)="switchTab('register')"
+      >
+        Cadastre-se
+      </button>
+    </div>
+
+    <h2 id="loginTitle">{{ activeTab() === 'login' ? 'Entrar' : 'Cadastre-se' }}</h2>
+
+    @if (activeTab() === 'login') {
+      <form [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()">
+        <div class="mb-3">
+          <label for="loginEmail" class="form-label">E-mail</label>
+          <input
+            type="email"
+            class="form-control"
+            id="loginEmail"
+            placeholder="cliente@email.com"
+            formControlName="email"
+            [class.is-invalid]="loginForm.controls.email.invalid && loginForm.controls.email.touched"
+          >
+        </div>
+        <div class="mb-3">
+          <label for="loginPassword" class="form-label">Senha</label>
+          <input
+            type="password"
+            class="form-control"
+            id="loginPassword"
+            formControlName="password"
+            [class.is-invalid]="loginForm.controls.password.invalid && loginForm.controls.password.touched"
+          >
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-4 gap-3">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="rememberLogin" formControlName="remember">
+            <label class="form-check-label" for="rememberLogin">Lembrar acesso</label>
+          </div>
+          <a href="#" class="text-link">Esqueci a senha</a>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Acessar</button>
+        @if (loginFeedback()) {
+          <p class="form-feedback mt-3" [class.error]="loginError()" aria-live="polite">{{ loginFeedback() }}</p>
+        }
+      </form>
+    } @else {
+      <form [formGroup]="registerForm" (ngSubmit)="onRegisterSubmit()">
+        <div class="mb-3">
+          <label for="registerName" class="form-label">Nome completo</label>
+          <input
+            type="text"
+            class="form-control"
+            id="registerName"
+            formControlName="name"
+            [class.is-invalid]="registerForm.controls.name.invalid && registerForm.controls.name.touched"
+          >
+        </div>
+        <div class="mb-3">
+          <label for="registerEmail" class="form-label">E-mail</label>
+          <input
+            type="email"
+            class="form-control"
+            id="registerEmail"
+            placeholder="cliente@email.com"
+            formControlName="email"
+            [class.is-invalid]="registerForm.controls.email.invalid && registerForm.controls.email.touched"
+          >
+        </div>
+        <div class="mb-3">
+          <label for="registerPhone" class="form-label">Telefone</label>
+          <input
+            type="tel"
+            class="form-control"
+            id="registerPhone"
+            placeholder="(11) 99999-9999"
+            formControlName="phone"
+            [class.is-invalid]="registerForm.controls.phone.invalid && registerForm.controls.phone.touched"
+          >
+        </div>
+        <div class="mb-3">
+          <label for="registerPassword" class="form-label">Senha</label>
+          <input
+            type="password"
+            class="form-control"
+            id="registerPassword"
+            formControlName="password"
+            [class.is-invalid]="registerForm.controls.password.invalid && registerForm.controls.password.touched"
+          >
+        </div>
+        <div class="mb-4">
+          <label for="registerPasswordConfirm" class="form-label">Confirmar senha</label>
+          <input
+            type="password"
+            class="form-control"
+            id="registerPasswordConfirm"
+            formControlName="passwordConfirm"
+            [class.is-invalid]="registerForm.controls.passwordConfirm.invalid && registerForm.controls.passwordConfirm.touched"
+          >
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Criar cadastro</button>
+        @if (registerFeedback()) {
+          <p class="form-feedback mt-3" [class.error]="registerError()" aria-live="polite">{{ registerFeedback() }}</p>
+        }
+      </form>
+    }
+  </section>
+</main>

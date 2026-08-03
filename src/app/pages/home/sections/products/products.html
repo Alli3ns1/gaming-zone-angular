@@ -1,0 +1,61 @@
+<section id="produtos" class="section-pad">
+  <div class="container">
+    <div class="section-heading">
+      <p class="section-kicker">Catálogo</p>
+      <h2>Produtos em destaque</h2>
+      <p>Escolha por categoria ou pesquise um item específico.</p>
+    </div>
+
+    <div class="product-toolbar">
+      <div class="btn-group filter-group" role="group" aria-label="Filtrar produtos">
+        @for (filter of filters; track filter.value) {
+          <button
+            class="btn filter-btn"
+            [class.active]="activeFilter() === filter.value"
+            type="button"
+            (click)="setFilter(filter.value)"
+          >
+            {{ filter.label }}
+          </button>
+        }
+      </div>
+      <input
+        type="search"
+        class="form-control"
+        placeholder="Buscar produto"
+        aria-label="Buscar produto"
+        (input)="onSearch($event)"
+      >
+    </div>
+
+    <div class="row g-4 product-grid">
+      @for (product of filteredProducts(); track product.id) {
+        <div class="col-md-6 col-lg-4 product-item">
+          <article class="product-card">
+            <img [src]="product.image" [alt]="product.imageAlt">
+            <div class="product-body">
+              <span class="tag">{{ product.tag }}</span>
+              <h3>{{ product.title }}</h3>
+              <p>{{ product.description }}</p>
+              <div class="product-footer">
+                <strong>{{ product.price | currency:'BRL' }}</strong>
+                <button
+                  class="btn btn-sm btn-primary add-cart"
+                  type="button"
+                  [disabled]="isAdded(product.id)"
+                  (click)="addToCart(product.id)"
+                >
+                  {{ isAdded(product.id) ? 'Adicionado' : 'Adicionar' }}
+                </button>
+              </div>
+            </div>
+          </article>
+        </div>
+      }
+    </div>
+
+    @if (filteredProducts().length === 0) {
+      <p class="empty-message">Nenhum produto encontrado.</p>
+    }
+  </div>
+</section>
