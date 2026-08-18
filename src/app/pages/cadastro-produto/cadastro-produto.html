@@ -5,6 +5,12 @@
   <div class="container" style="max-width: 640px;">
     <h2 class="mb-4">{{ produto.id ? 'Editar Produto' : 'Cadastrar Produto' }}</h2>
 
+    @if (mensagem()) {
+      <div class="inline-msg" [class.sucesso]="mensagem()!.tipo === 'sucesso'" [class.erro]="mensagem()!.tipo === 'erro'">
+        {{ mensagem()!.texto }}
+      </div>
+    }
+
     <form (ngSubmit)="salvarProduto()" #form="ngForm">
       <div class="mb-3">
         <label class="form-label" for="category">Categoria</label>
@@ -55,3 +61,4 @@
 </main>
 
 <app-footer />
+

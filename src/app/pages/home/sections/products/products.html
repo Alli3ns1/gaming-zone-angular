@@ -32,7 +32,7 @@
       @for (product of filteredProducts(); track product.id) {
         <div class="col-md-6 col-lg-4 product-item">
           <article class="product-card">
-            <img [src]="product.image" [alt]="product.imageAlt">
+            <img [src]="product.image" [alt]="product.imageAlt" loading="lazy">
             <div class="product-body">
               <span class="tag">{{ product.tag }}</span>
               <h3>{{ product.title }}</h3>

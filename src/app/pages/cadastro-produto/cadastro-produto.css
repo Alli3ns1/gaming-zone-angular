@@ -1,1 +1,21 @@
 /* Estilos específicos do formulário de cadastro, se precisar customizar. */
+
+/* Estilos de feedback inline */
+.inline-msg {
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.inline-msg.sucesso {
+  background: #edfaf3;
+  color: #168a4a;
+  border-left: 4px solid #168a4a;
+}
+
+.inline-msg.erro {
+  background: #fff5f5;
+  color: #d92d20;
+  border-left: 4px solid #d92d20;
+}

@@ -1,3 +1,28 @@
-/* Estilos do header vêm do styles.css global (classes .site-header, .navbar-brand, etc.)
-   para manter 100% de paridade visual com o projeto original.
-   Use este arquivo para estilos exclusivos deste componente, se precisar. */
+.nav-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-username {
+  font-weight: 700;
+  color: var(--color-blue-dark);
+  font-size: 0.9rem;
+}
+
+.btn-logout {
+  border: 1px solid var(--color-red);
+  background: transparent;
+  color: var(--color-red);
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 4px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn-logout:hover {
+  background: var(--color-red);
+  color: #fff;
+}

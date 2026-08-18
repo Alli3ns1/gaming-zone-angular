@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Product, ProductCategory } from '../../core/models/product.model';
@@ -19,6 +19,9 @@ export class CadastroProduto implements OnInit {
 
   readonly categorias: ProductCategory[] = ['pc', 'jogo', 'acessorio'];
 
+  // Feedback inline substituindo alert()
+  readonly mensagem = signal<{ texto: string; tipo: 'sucesso' | 'erro' } | null>(null);
+
   // Objeto ligado ao formulário via [(ngModel)]. Sem "id" = modo cadastro.
   produto: Partial<Product> = {
     category: 'pc',
@@ -36,8 +39,10 @@ export class CadastroProduto implements OnInit {
 
     // Se veio um :id na rota, é edição: carrega o produto da API e preenche o form.
     if (idParam) {
-      this.productService.obterProdutoPorId(Number(idParam)).subscribe((dados) => {
-        this.produto = dados;
+      this.productService.obterProdutoPorId(Number(idParam)).subscribe({
+        next: (dados) => (this.produto = dados),
+        error: () =>
+          this.mensagem.set({ texto: 'Erro ao carregar produto para edição.', tipo: 'erro' }),
       });
     }
   }
@@ -50,17 +55,25 @@ export class CadastroProduto implements OnInit {
 
     if (this.produto.id) {
       // PUT - já existe id, então é atualização
-      this.productService.atualizarProduto(this.produto.id, this.produto).subscribe(() => {
-        alert('Produto atualizado com sucesso!');
-        this.productService.carregarProdutos();
-        this.router.navigate(['/painel-principal']);
+      this.productService.atualizarProduto(this.produto.id, this.produto).subscribe({
+        next: () => {
+          this.mensagem.set({ texto: 'Produto atualizado com sucesso!', tipo: 'sucesso' });
+          this.productService.carregarProdutos();
+          setTimeout(() => this.router.navigate(['/painel-principal']), 1200);
+        },
+        error: () =>
+          this.mensagem.set({ texto: 'Erro ao atualizar o produto. Tente novamente.', tipo: 'erro' }),
       });
     } else {
       // POST - sem id, é um novo cadastro
-      this.productService.adicionarProduto(this.produto).subscribe(() => {
-        alert('Produto cadastrado com sucesso!');
-        this.productService.carregarProdutos();
-        this.router.navigate(['/painel-principal']);
+      this.productService.adicionarProduto(this.produto).subscribe({
+        next: () => {
+          this.mensagem.set({ texto: 'Produto cadastrado com sucesso!', tipo: 'sucesso' });
+          this.productService.carregarProdutos();
+          setTimeout(() => this.router.navigate(['/painel-principal']), 1200);
+        },
+        error: () =>
+          this.mensagem.set({ texto: 'Erro ao cadastrar o produto. Tente novamente.', tipo: 'erro' }),
       });
     }
   }

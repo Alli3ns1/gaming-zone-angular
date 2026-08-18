@@ -23,7 +23,40 @@
   margin-bottom: 12px;
 }
 
-/* Overlay de confirmação inline */
+/* Modal personalizado */
+.modal-backdrop-custom {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 7, 11, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1060;
+  backdrop-filter: blur(4px);
+}
+
+.modal-card {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 28px;
+  max-width: 480px;
+  width: 90%;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Confirmação de exclusão */
 .confirm-overlay {
   position: fixed;
   inset: 0;
@@ -31,11 +64,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1050;
+  z-index: 1070;
 }
 
 .confirm-box {
-  background: #fff;
+  background: #ffffff;
   border-radius: 10px;
   padding: 28px 32px;
   max-width: 380px;

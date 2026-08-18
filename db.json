@@ -7,7 +7,7 @@
       "tag": "PC Gamer",
       "title": "Setup Performance",
       "description": "Configuração indicada para jogos, estudos e criação de conteúdo.",
-      "price": 4899.0,
+      "price": 4899,
       "image": "assets/img/jogo1.PNG",
       "imageAlt": "Produto gamer em destaque"
     },
@@ -33,5 +33,6 @@
       "image": "assets/img/jogo3.PNG",
       "imageAlt": "Acessórios gamer para computador e console"
     }
-  ]
+  ],
+  "clientes": []
 }

@@ -1,6 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, catchError, of } from 'rxjs';
 import { Product, ProductCategory } from '../models/product.model';
 
 /**
@@ -18,6 +18,10 @@ export class ProductService {
 
   private readonly products = signal<Product[]>([]);
 
+  /** Estado de carregamento e erro, usados nos templates para feedback ao usuário. */
+  readonly carregando = signal(false);
+  readonly erroApi = signal<string | null>(null);
+
   // Lista completa, usada pelo Painel Principal (admin)
   readonly produtos = computed(() => this.products());
 
@@ -32,10 +36,12 @@ export class ProductService {
 
     return this.products().filter((product) => {
       const categoryMatches = filter === 'todos' || product.category === filter;
-      const nameMatches = product.name.toLowerCase().includes(term);
+      const productName = (product.name || product.title || '').toLowerCase();
+      const nameMatches = productName.includes(term);
       return categoryMatches && nameMatches;
     });
   });
+
 
   constructor() {
     this.carregarProdutos();
@@ -43,9 +49,23 @@ export class ProductService {
 
   /** GET /produtos - busca a lista da API e atualiza o signal. */
   carregarProdutos(): void {
-    this.http.get<Product[]>(this.apiUrl).subscribe((dados) => {
-      this.products.set(dados);
-    });
+    this.carregando.set(true);
+    this.erroApi.set(null);
+
+    this.http
+      .get<Product[]>(this.apiUrl)
+      .pipe(
+        catchError(() => {
+          this.erroApi.set(
+            'Não foi possível conectar à API. Verifique se o servidor está rodando (npm run api).'
+          );
+          return of([]);
+        })
+      )
+      .subscribe((dados) => {
+        this.products.set(dados);
+        this.carregando.set(false);
+      });
   }
 
   /** GET /produtos/:id - usado na tela de Cadastro para carregar dados na edição. */

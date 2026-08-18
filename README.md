@@ -1,134 +1,152 @@
-# Gaming Zone — Angular
+# Gaming Zone — Enterprise Gaming E-Commerce & Admin Platform
 
-Versão migrada do projeto original (HTML + CSS + JS + Bootstrap) para **Angular 21 + Bootstrap 5 + jQuery**, com um painel administrativo para gerenciar o catálogo de produtos via API (JSON-Server).
+Aplicação web SPA (*Single Page Application*) desenvolvida em **Angular 21** com arquitetura moderna baseada em **Standalone Components**, **Angular Signals** e controle de acesso baseado em papéis (**RBAC - Role-Based Access Control**). A solução integra uma vitrine pública de comércio eletrônico, sistema de autenticação e um painel de administração para gestão de catálogo (produtos) e carteira de clientes via API RESTful.
 
-## Pré-requisitos
+---
 
-- Node.js 20 LTS ou superior (o projeto foi gerado com Node 22)
-- npm 10+ (vem junto com o Node)
-- Angular CLI instalada globalmente: `npm install -g @angular/cli`
+## 🛠️ Stack Tecnológica
 
-## Instalação
+| Camada | Tecnologia | Versão | Descrição / Papel |
+|---|---|---|---|
+| **Core Framework** | Angular | 21.2 | Standalone Components, Signals, Computed State, Control Flow syntax |
+| **Linguagem** | TypeScript | 5.9 | Tipagem estática rigorosa e interfaces de domínio |
+| **Design & UI** | Bootstrap | 5.3 | Sistema de grid responsivo, utilitários e layout base |
+| **Interatividade Mobile** | jQuery | 4.0 | Controle de colapso do menu de navegação mobile |
+| **Mock API / Backend** | JSON Server | 0.17 | Mock de API RESTful com persistência síncrona em disco (`db.json`) |
+| **Test Runner** | Vitest | 4.0 | Suite para testes unitários e de integração de componentes |
 
+---
+
+## 📐 Arquitetura do Projeto
+
+A aplicação segue uma divisão em camadas com separação clara de responsabilidades (*Separation of Concerns*):
+
+```
+src/app/
+├── core/                                # Núcleo da aplicação (regras de negócio e dados globais)
+│   ├── guards/
+│   │   ├── admin.guard.ts               # Guard de rotas para perfil Administrador
+│   │   └── auth.guard.ts                # Guard de rotas para usuários autenticados
+│   ├── models/
+│   │   ├── cliente.model.ts             # Interface de domínio: Cliente
+│   │   ├── product.model.ts             # Interface de domínio: Product + Union Type ProductCategory
+│   │   └── user.model.ts                # Interface de domínio: User + Role ('admin' | 'client')
+│   ├── services/
+│   │   ├── auth.ts                      # Gestão de credenciais, sessão (sessionStorage) e signals reativos
+│   │   ├── cart.ts                      # Gerenciamento de estado do carrinho de compras
+│   │   ├── cliente.ts                   # Camada de integração HTTP para CRUD de clientes
+│   │   └── product.ts                   # Camada de integração HTTP para CRUD e busca reativa de produtos
+│   └── validators/
+│       └── password-match.validator.ts  # Validador reativo para confirmação de senha
+├── layout/                              # Componentes estruturais e persistentes de interface
+│   ├── header/                          # Barra de navegação com renderização condicional por perfil
+│   └── footer/                          # Rodapé institucional
+├── pages/                               # Módulos de visualização e páginas de rota
+│   ├── home/                            # Vitrine pública
+│   │   └── sections/                    # Componentes das seções (hero, trust-band, products, about, contact)
+│   ├── login/                           # Autenticação e cadastro de novos clientes (Reactive Forms)
+│   ├── painel-principal/                # Painel de gestão de catálogo de produtos com exclusão inline
+│   ├── cadastro-produto/                # Formulário de inserção e atualização de produtos (Template-driven)
+│   └── clientes/                        # Painel de gestão de clientes com modal de inserção e edição
+├── app.routes.ts                        # Mapeamento declarativo de rotas, títulos e guards
+├── app.config.ts                        # Configuração global de providers (Router, HttpClient)
+└── app.ts                               # Componente raiz de ancoragem (<router-outlet>)
+```
+
+---
+
+## 🔒 Segurança e Controle de Acesso (RBAC)
+
+O sistema implementa dois níveis de privilégio com proteção de rotas via `adminGuard`:
+
+| Perfil | Identificador / Login | Senha Padrão | Escopo de Acesso |
+|---|---|---|---|
+| **Administrador** | `Administrador` | `admin123` | Acesso irrestrito a todas as áreas: vitrine, painel de produtos e gestão de clientes. |
+| **Cliente** | *Nome informado no cadastro* | *Senha cadastrada* | Acesso à vitrine pública, visualização de catálogo e carrinho de compras. Bloqueio automático a rotas administrativas. |
+
+---
+
+## 🚦 Roteamento e Proteção
+
+| Rota | Acesso | Guard | Descrição |
+|---|---|---|---|
+| `/` | Público | — | Página inicial, catálogo dinâmico com filtros reativos e busca. |
+| `/login` | Público | — | Autenticação e formulário de novo cadastro (Nome e Senha). |
+| `/painel-principal` | Restrito | `adminGuard` | Tabela administrativa de produtos com ações de edição e exclusão. |
+| `/cadastro-produto` | Restrito | `adminGuard` | Formulário para cadastro de novos produtos no catálogo. |
+| `/cadastro-produto/:id` | Restrito | `adminGuard` | Formulário pré-carregado para atualização de produto existente. |
+| `/clientes` | Restrito | `adminGuard` | Gestão completa de clientes cadastrados (inclusão, edição, exclusão). |
+| `**` | Redirecionamento | — | Redireciona rotas inexistentes para `/`. |
+
+---
+
+## 📡 Endpoints da API REST (`json-server`)
+
+O servidor mock opera por padrão na porta `3000` consumindo e persistindo os dados no arquivo `db.json`.
+
+### Recursos: `/produtos`
+| Método | Endpoint | Payload / Parâmetros | Descrição |
+|---|---|---|---|
+| `GET` | `/produtos` | — | Retorna a listagem completa de produtos. |
+| `GET` | `/produtos/:id` | `id` (inteiro) | Retorna os detalhes de um produto específico. |
+| `POST` | `/produtos` | `Product` (JSON) | Cria um novo produto no catálogo. |
+| `PUT` | `/produtos/:id` | `id`, `Product` (JSON) | Atualiza integralmente os dados de um produto. |
+| `DELETE` | `/produtos/:id` | `id` (inteiro) | Remove o produto correspondente. |
+
+### Recursos: `/clientes`
+| Método | Endpoint | Payload / Parâmetros | Descrição |
+|---|---|---|---|
+| `GET` | `/clientes` | — | Retorna a listagem completa de clientes. |
+| `GET` | `/clientes/:id` | `id` (inteiro) | Retorna os detalhes de um cliente. |
+| `POST` | `/clientes` | `Cliente` (JSON) | Cadastra um novo cliente na base. |
+| `PUT` | `/clientes/:id` | `id`, `Cliente` (JSON) | Atualiza os dados cadastrais do cliente. |
+| `DELETE` | `/clientes/:id` | `id` (inteiro) | Exclui o registro do cliente. |
+
+---
+
+## 💻 Instalação e Execução Local
+
+### Pré-requisitos
+* **Node.js**: v20.x LTS ou v22.x
+* **npm**: v10.x ou superior
+* **Angular CLI**: `npm install -g @angular/cli`
+
+### 1. Clonagem e Instalação de Dependências
 ```bash
+git clone https://github.com/Alli3ns1/gaming-zone-angular
 cd gaming-zone-angular
 npm install
 ```
 
-Isso instala Angular, Bootstrap, jQuery, o `json-server` (usado como API local) e os tipos do jQuery — tudo já está listado no `package.json`, não precisa instalar nada manualmente além disso.
+### 2. Assets Estáticos
+Certifique-se de que os assets de mídia estejam presentes no diretório `public/assets/img/`:
+* `logo.png`, `banner1.PNG`, `banner2.PNG`, `banner3.PNG`, `jogo1.PNG`, `jogo2.PNG`, `jogo3.PNG`.
 
-## ⚠️ Antes de rodar: coloque as imagens
+### 3. Inicialização dos Serviços em Desenvolvimento
 
-A pasta `img/` do projeto original estava vazia, então as imagens não vieram no pacote. Copie os arquivos originais (mesmos nomes) para:
-
-```
-public/assets/img/
-├── logo.png
-├── banner1.PNG
-├── banner2.PNG
-├── banner3.PNG
-├── jogo1.PNG
-├── jogo2.PNG
-└── jogo3.PNG
-```
-
-Tudo que está dentro de `public/` é copiado como está para a raiz do build (é a pasta oficial de assets estáticos do Angular CLI atual). Por isso os componentes referenciam os caminhos como `assets/img/logo.png`.
-
-## Rodando em desenvolvimento
-
-O catálogo de produtos agora vem de uma API local (`json-server`), então é preciso rodar **dois processos em paralelo**, cada um em um terminal:
+A execução completa exige dois terminais simultâneos:
 
 ```bash
-# Terminal 1 — API (lê e escreve em db.json)
+# Terminal 1 — Servidor da API REST
 npm run api
 ```
 
 ```bash
-# Terminal 2 — aplicação Angular
+# Terminal 2 — Servidor de Desenvolvimento Angular (Vite HMR)
 npm start
 ```
 
-A API sobe em `http://localhost:3000` (endpoint principal: `http://localhost:3000/produtos`) e a aplicação em `http://localhost:4200`. Se quiser manter a mesma porta do projeto original:
+* **Aplicação Web:** `http://localhost:4200`
+* **API REST (JSON Server):** `http://localhost:3000`
 
-```bash
-ng serve --port 5500
-```
+---
 
-## Build de produção
+## 📜 Scripts npm Disponíveis
 
-```bash
-npm run build
-```
-
-Gera os arquivos finais em `dist/gaming-zone-angular/browser`. É esse conteúdo que você sobe para qualquer hospedagem estática (Netlify, Vercel, GitHub Pages, um servidor Nginx, etc.).
-
-> Como o catálogo depende do `json-server` rodando em `localhost:3000`, um deploy estático (sem back-end) só vai funcionar de fato se a API também estiver publicada em algum lugar acessível — ou se o `apiUrl` do `ProductService` for apontado para essa API publicada.
-
-## Painel Administrativo (Painel Principal + Cadastro)
-
-Além da vitrine pública, o projeto tem duas telas para gerenciar o catálogo:
-
-| Rota | Componente | Função |
-| --- | --- | --- |
-| `/painel-principal` | `PainelPrincipal` | Lista todos os produtos cadastrados na API, com opções de editar e excluir |
-| `/cadastro-produto` | `CadastroProduto` | Formulário para cadastrar um novo produto |
-| `/cadastro-produto/:id` | `CadastroProduto` | Mesmo formulário, mas pré-preenchido para editar um produto existente |
-
-Essas telas usam o `ProductService` (`src/app/core/services/product.ts`), que faz as requisições HTTP para o `json-server`:
-
-- `GET /produtos` — lista os produtos (`carregarProdutos()`)
-- `GET /produtos/:id` — busca um produto específico (`obterProdutoPorId()`)
-- `POST /produtos` — cadastra um novo produto (`adicionarProduto()`)
-- `PUT /produtos/:id` — atualiza um produto existente (`atualizarProduto()`)
-- `DELETE /produtos/:id` — remove um produto (`deletarProduto()`)
-
-Os dados ficam persistidos no arquivo `db.json`, na raiz do projeto (é o "banco de dados" do `json-server`).
-
-## O que mudou em relação ao projeto original
-
-| Original | Angular |
-| --- | --- |
-| `index.html` (tudo em um arquivo) | `pages/home` + 5 componentes de seção (`hero`, `trust-band`, `products`, `about`, `contact`) |
-| `login.html` | `pages/login` |
-| — | `pages/painel-principal` e `pages/cadastro-produto` (novo painel administrativo, consumindo API) |
-| `js/app.js` (funções soltas + manipulação de DOM) | `core/services` (`ProductService`, `CartService`, `AuthService`) + lógica dentro de cada componente |
-| Filtro/busca de produtos via `querySelectorAll` | `Signal` + `computed()` no `ProductService` |
-| Catálogo de produtos fixo no código | Catálogo vindo de uma API (`json-server` + `HttpClient`), com CRUD completo |
-| Cadastro/login com `localStorage` | Mesma ideia, encapsulada no `AuthService` |
-| Validação HTML5 (`checkValidity`) | Angular Reactive Forms (`FormGroup`, `Validators`) — login/cadastro de usuário; formulário de produto usa Template-driven Forms (`ngModel`) |
-| CSS em `css/style.css` | Copiado para `src/styles.css` (estilos globais, sem alterações) — mantém 100% a aparência original |
-| Bootstrap e jQuery via `<script>` no HTML (CDN) | Instalados via npm e referenciados no `angular.json` (`styles`/`scripts`) |
-
-## Onde entra o jQuery
-
-O `HeaderComponent` (`src/app/layout/header/header.ts`) usa jQuery para fechar o menu mobile (navbar colapsada) ao clicar em um link — o mesmo comportamento do `app.js` original. O resto da interatividade (filtros, carrinho, formulários, login, painel administrativo) foi migrado para o "jeito Angular" (signals, forms), que é mais robusto e testável — mas o jQuery continua disponível globalmente (`window.$`) para qualquer novo uso que você precisar.
-
-## Estrutura de pastas
-
-```
-gaming-zone-angular/
-├── db.json                 # "banco de dados" do json-server (coleção "produtos")
-├── src/app/
-│   ├── core/
-│   │   ├── models/          # Product, User (interfaces TypeScript)
-│   │   ├── services/         # ProductService (HTTP + signals), CartService, AuthService
-│   │   └── validators/        # validador de confirmação de senha
-│   ├── layout/
-│   │   ├── header/           # navbar, usada em Home, Painel Principal e Cadastro
-│   │   └── footer/
-│   ├── pages/
-│   │   ├── home/
-│   │   │   ├── home.ts        # monta as seções
-│   │   │   └── sections/
-│   │   │       ├── hero/
-│   │   │       ├── trust-band/
-│   │   │       ├── products/
-│   │   │       ├── about/
-│   │   │       └── contact/
-│   │   ├── login/
-│   │   ├── painel-principal/  # lista de produtos (admin), com editar/excluir
-│   │   └── cadastro-produto/  # formulário de cadastro/edição de produto
-│   ├── app.routes.ts          # rotas: "", "login", "painel-principal", "cadastro-produto"[/:id]
-│   ├── app.config.ts          # providers: router, HttpClient
-│   └── app.ts                 # componente raiz (só o <router-outlet>)
-```
+| Script | Comando | Finalidade |
+|---|---|---|
+| `npm start` | `ng serve` | Inicia o servidor local com Live Reload na porta 4200. |
+| `npm run api` | `json-server --watch db.json --port 3000` | Inicia a API mock com persistência ativa. |
+| `npm run build` | `ng build` | Compila o bundle otimizado de produção em `dist/`. |
+| `npm run watch` | `ng build --watch --configuration development` | Compila em modo contínuo com geração de mapas de desenvolvimento. |
+| `npm test` | `ng test` | Executa a suite de testes unitários automatizados. |

@@ -22,9 +22,20 @@
           <li class="nav-item"><a class="nav-link" href="#produtos">Produtos</a></li>
           <li class="nav-item"><a class="nav-link" href="#sobre">Sobre</a></li>
           <li class="nav-item"><a class="nav-link" href="#contato">Contato</a></li>
-          <li class="nav-item"><a class="nav-link" routerLink="/painel-principal">Painel Principal</a></li>
-          <li class="nav-item"><a class="nav-link" routerLink="/cadastro-produto">Cadastro</a></li>
-          <li class="nav-item"><a class="nav-link" routerLink="/login">Login</a></li>
+
+          @if (isLoggedIn()) {
+            @if (isAdmin()) {
+              <li class="nav-item"><a class="nav-link" routerLink="/painel-principal">Painel Principal</a></li>
+              <li class="nav-item"><a class="nav-link" routerLink="/cadastro-produto">Cadastro</a></li>
+              <li class="nav-item"><a class="nav-link" routerLink="/clientes">Clientes</a></li>
+            }
+            <li class="nav-item nav-user">
+              <span class="nav-username">Olá, {{ (currentUser()?.name ?? '').split(' ')[0] }}</span>
+              <button class="btn-logout" type="button" (click)="logout()">Sair</button>
+            </li>
+          } @else {
+            <li class="nav-item"><a class="nav-link" routerLink="/login">Login</a></li>
+          }
         </ul>
         <button class="cart-button ms-lg-3" type="button" aria-label="Itens no carrinho">
           Carrinho <span>{{ cartCount() }}</span>

@@ -8,6 +8,36 @@
         <a class="btn btn-primary" routerLink="/cadastro-produto">+ Novo Produto</a>
       </div>
 
+      <!-- Feedback de ação (exclusão etc.) -->
+      @if (mensagem()) {
+        <div class="inline-message" [class.sucesso]="mensagem()!.tipo === 'sucesso'" [class.erro]="mensagem()!.tipo === 'erro'">
+          {{ mensagem()!.texto }}
+        </div>
+      }
+
+      <!-- Dialog de confirmação de exclusão -->
+      @if (confirmandoExclusao() !== null) {
+        <div class="confirm-overlay">
+          <div class="confirm-box">
+            <p>Deseja realmente excluir o produto <strong>#{{ confirmandoExclusao() }}</strong>?</p>
+            <div class="confirm-actions">
+              <button class="btn btn-danger btn-sm" type="button" (click)="confirmarExclusao()">Sim, excluir</button>
+              <button class="btn btn-secondary btn-sm" type="button" (click)="cancelarExclusao()">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Estado de carregamento -->
+      @if (carregando()) {
+        <p class="loading-message">Carregando produtos...</p>
+      }
+
+      <!-- Erro de API -->
+      @if (erroApi()) {
+        <div class="inline-message erro">{{ erroApi() }}</div>
+      }
+
       <div class="table-responsive">
         <table class="table table-bordered align-middle">
           <thead class="table-dark">
@@ -26,7 +56,7 @@
               <tr>
                 <td>{{ produto.id }}</td>
                 <td>
-                  <img [src]="produto.image" [alt]="produto.imageAlt" width="60" height="60">
+                  <img [src]="produto.image" [alt]="produto.imageAlt" width="60" height="60" loading="lazy">
                 </td>
                 <td>{{ produto.title }}</td>
                 <td>{{ produto.tag }}</td>
@@ -36,7 +66,7 @@
                   <button class="btn btn-primary btn-sm" type="button" (click)="editarProduto(produto.id)">
                     Editar
                   </button>
-                  <button class="btn btn-danger btn-sm" type="button" (click)="excluirProduto(produto.id)">
+                  <button class="btn btn-danger btn-sm" type="button" (click)="pedirConfirmacao(produto.id)">
                     Excluir
                   </button>
                 </td>
@@ -46,7 +76,7 @@
         </table>
       </div>
 
-      @if (produtos().length === 0) {
+      @if (!carregando() && !erroApi() && produtos().length === 0) {
         <p class="empty-message">Nenhum produto cadastrado ainda.</p>
       }
     </div>

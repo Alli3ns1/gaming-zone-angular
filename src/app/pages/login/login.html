@@ -31,14 +31,14 @@
     @if (activeTab() === 'login') {
       <form [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()">
         <div class="mb-3">
-          <label for="loginEmail" class="form-label">E-mail</label>
+          <label for="loginUsername" class="form-label">Usuário</label>
           <input
-            type="email"
+            type="text"
             class="form-control"
-            id="loginEmail"
-            placeholder="cliente@email.com"
-            formControlName="email"
-            [class.is-invalid]="loginForm.controls.email.invalid && loginForm.controls.email.touched"
+            id="loginUsername"
+            placeholder="Nome de usuário"
+            formControlName="username"
+            [class.is-invalid]="loginForm.controls.username.invalid && loginForm.controls.username.touched"
           >
         </div>
         <div class="mb-3">
@@ -66,35 +66,14 @@
     } @else {
       <form [formGroup]="registerForm" (ngSubmit)="onRegisterSubmit()">
         <div class="mb-3">
-          <label for="registerName" class="form-label">Nome completo</label>
+          <label for="registerName" class="form-label">Nome de usuário</label>
           <input
             type="text"
             class="form-control"
             id="registerName"
+            placeholder="Seu nome de usuário"
             formControlName="name"
             [class.is-invalid]="registerForm.controls.name.invalid && registerForm.controls.name.touched"
-          >
-        </div>
-        <div class="mb-3">
-          <label for="registerEmail" class="form-label">E-mail</label>
-          <input
-            type="email"
-            class="form-control"
-            id="registerEmail"
-            placeholder="cliente@email.com"
-            formControlName="email"
-            [class.is-invalid]="registerForm.controls.email.invalid && registerForm.controls.email.touched"
-          >
-        </div>
-        <div class="mb-3">
-          <label for="registerPhone" class="form-label">Telefone</label>
-          <input
-            type="tel"
-            class="form-control"
-            id="registerPhone"
-            placeholder="(11) 99999-9999"
-            formControlName="phone"
-            [class.is-invalid]="registerForm.controls.phone.invalid && registerForm.controls.phone.touched"
           >
         </div>
         <div class="mb-3">
@@ -103,6 +82,7 @@
             type="password"
             class="form-control"
             id="registerPassword"
+            placeholder="Mínimo 6 caracteres"
             formControlName="password"
             [class.is-invalid]="registerForm.controls.password.invalid && registerForm.controls.password.touched"
           >
@@ -113,6 +93,7 @@
             type="password"
             class="form-control"
             id="registerPasswordConfirm"
+            placeholder="Repita a senha"
             formControlName="passwordConfirm"
             [class.is-invalid]="registerForm.controls.passwordConfirm.invalid && registerForm.controls.passwordConfirm.touched"
           >
